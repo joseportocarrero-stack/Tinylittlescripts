@@ -44,17 +44,17 @@ def get_tasks():
                 # Parse UTC timestamp and convert to local time
                 deadline_utc = datetime.strptime(
                     task.due_at, "%Y-%m-%dT%H:%M:%SZ"
-                    ).replace(tzinfo=timezone.utc)
-                    deadline_local = deadline_utc.astimezone(LOCAL_TZ)
-                    # Filter: Only show tasks that are due as of today
-                    if deadline > datetime.utcnow():
-                        report.append({
-                            "Course": course.name,
-                            "Type": "Task",
-                            "Name": task.name,
-                            "Deadline": deadline.strftime("%Y-%m-%d %H:%M"),
-                            "Link": task.html_url
-                        })
+                ).replace(tzinfo=timezone.utc)
+                deadline_local = deadline_utc.astimezone(LOCAL_TZ)
+                # Filter: Only show tasks that are due as of today
+                if deadline_local >= start_of_today:
+                  report.append({
+                      "Course": course.name,
+                      "Type": "Task",
+                      "Name": task.name,
+                      "Deadline": deadline_local.strftime("%Y-%m-%d %H:%M GMT-5"),
+                      "Link": task.html_url
+                  })
         except Exception as e:
             # Sometimes there are no permissions or the course does not have the module active
             pass
