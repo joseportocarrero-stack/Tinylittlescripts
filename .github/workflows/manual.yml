@@ -1,0 +1,30 @@
+name: Canvas daily check
+
+on:
+  schedule:
+    # 10:00 AM Peru time (GMT-5) → 15:00 UTC
+    - cron: '0 15 * * *'
+    # 10:00 PM Peru time → 03:00 UTC (next day)
+    - cron: '0 3 * * *'
+  workflow_dispatch:   # manual trigger for testing
+
+jobs:
+  run-canvas-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Canvas tasks checker
+        env:
+          CANVAS_URL: ${{ secrets.CANVAS_URL }}
+          CANVAS_KEY: ${{ secrets.CANVAS_KEY }}
+        run: python canvasautomationtaskproject_v1_1.py
