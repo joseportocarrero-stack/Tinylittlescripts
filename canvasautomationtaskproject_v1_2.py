@@ -16,7 +16,7 @@ import zoneinfo
 
 # Try to get secrets from Colab first; fall back to environment variables
 try:
-    !pip install canvasapi
+    #!pip install canvasapi
     from google.colab import userdata
     API_URL = userdata.get('CANVAS_URL')
     API_KEY = userdata.get('CANVAS_KEY')
