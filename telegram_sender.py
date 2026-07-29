@@ -9,6 +9,7 @@ Original file is located at
 
 import os
 import requests
+import time
 
 def send_telegram_message(text: str, parse_mode: str = "HTML"):
     """
@@ -26,6 +27,31 @@ def send_telegram_message(text: str, parse_mode: str = "HTML"):
         return
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
+    if len(text) > 4096:
+        # Split the text into chunks of 4096 characters
+        chunks = [text[i:i+4096] for i in range(0, len(text), 4096)]
+        for chunk in chunks:
+            # Wait a tiny bit between messages to avoid hitting TG rate limits 
+            time.sleep(0.5)
+            
+            payload = {
+                "chat_id": chat_id,
+                "text": chunk,
+                "parse_mode": parse_mode,
+                "disable_web_page_preview": True
+            }
+            try:
+                response = requests.post(url, json=payload, timeout=10)
+                response.raise_for_status()
+                print("Sent a chunk of the report.")
+            except Exception as e:
+                print(f"Failed to send chunk: {e}")
+                # If the chunk fails due to HTML breaking, try sending it as plain text
+                if parse_mode == "HTML":
+                    payload["parse_mode"] = None
+                    requests.post(url, json=payload, timeout=10)
+        print("All report chunks sent.")
+        return
     payload = {
         "chat_id": chat_id,
         "text": text,
