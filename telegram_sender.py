@@ -15,11 +15,14 @@ def send_telegram_message(text: str, parse_mode: str = "HTML"):
     Sends a message to the configured Telegram chat.
     Reads TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID from environment variables.
     """
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    token = os.getenv("TELEGRAM_BOT_TOKEN").strip()
+    chat_id = os.getenv("TELEGRAM_CHAT_ID").strip()
 
     if not token or not chat_id:
         print("Telegram credentials not set – skipping notification.")
+        return
+    if not text.strip():
+        print("Notification text is empty, skipping send.")
         return
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
@@ -36,3 +39,5 @@ def send_telegram_message(text: str, parse_mode: str = "HTML"):
         print("Report sent to Telegram successfully.")
     except requests.exceptions.RequestException as e:
         print(f"Failed to send Telegram message: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Telegram says: {e.response.text}")
