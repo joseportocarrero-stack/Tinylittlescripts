@@ -21,9 +21,11 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
+        working-directory: "./CanvasAutomationTaskProject"
         run: pip install -r requirements.txt
         
       - name: Run Canvas tasks checker
+        working-directory: "./CanvasAutomationTaskProject"
         env:
           CANVAS_URL: ${{ secrets.CANVAS_URL }}
           CANVAS_KEY: ${{ secrets.CANVAS_KEY }}
