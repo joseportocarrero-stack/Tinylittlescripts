@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1yyCToWstmJ54xSWFJEOBlLFZZqzECMk1
 """
 
-!pip install google-auth-oauthlib google-api-python-client
+#!pip install google-auth-oauthlib google-api-python-client
 
 import json
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -47,14 +47,14 @@ def main():
 if __name__ == "__main__":
     main()
 
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
+#from google.oauth2.credentials import Credentials
+#from googleapiclient.discovery import build
 
 # Paste your token here temporarily for testing
-creds = Credentials(token=None, refresh_token='PASTE_YOUR_TOKEN_HERE',
-                    token_uri="https://oauth2.googleapis.com/token",
-                    client_id="YOUR_CLIENT_ID", client_secret="YOUR_CLIENT_SECRET")
+#creds = Credentials(token=None, refresh_token='PASTE_YOUR_TOKEN_HERE',
+#                   token_uri="https://oauth2.googleapis.com/token",
+#                    client_id="YOUR_CLIENT_ID", client_secret="YOUR_CLIENT_SECRET")
 
-service = build('tasks', 'v1', credentials=creds)
-result = service.tasklists().list().execute()
-print("Success! Your token is valid. Task lists found:", result)
+#service = build('tasks', 'v1', credentials=creds)
+#result = service.tasklists().list().execute()
+#print("Success! Your token is valid. Task lists found:", result)
