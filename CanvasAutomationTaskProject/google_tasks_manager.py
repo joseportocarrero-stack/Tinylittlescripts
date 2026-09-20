@@ -73,11 +73,11 @@ def list_tasks(tasklist="@default", show_completed=False):
         result = service.tasks().list(
             tasklist=tasklist,
             showCompleted=show_completed,
-            fields="nextPageToken,tasks(id,title,due,notes)",
+            fields="nextPageToken,items(id,title,due,notes)",
             maxResults=100,
             pageToken=page_token
         ).execute()
-        tasks.extend(result.get("tasks", []))
+        tasks.extend(result.get("items", []))
         page_token = result.get("nextPageToken")
         if not page_token:
             break
