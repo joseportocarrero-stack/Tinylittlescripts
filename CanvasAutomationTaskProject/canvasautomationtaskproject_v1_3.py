@@ -46,7 +46,7 @@ except ImportError:
 
 # Try to get secrets from Colab first; fall back to environment variables
 try:
-    !pip install canvasapi
+    #!pip install canvasapi
     from canvasapi import Canvas
     from google.colab import userdata
     API_URL = userdata.get('CANVAS_URL')
