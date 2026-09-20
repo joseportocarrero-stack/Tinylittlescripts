@@ -1,4 +1,3 @@
-Here is the drafted update for your README.md file, incorporating the new Version 1.3 features, the google_tasks_manager.py script, and the three new required Google API secrets.
 ------------------------------
 ## Canvas Automation Task Project (v1.3)
 This directory contains the scripts and configuration needed to automatically check Canvas for updates, synchronize them with Google Tasks, and send reports via Telegram.
@@ -12,9 +11,9 @@ This directory contains the scripts and configuration needed to automatically ch
 
 ## ⚙️ How it Works (GitHub Actions)
 The execution of these scripts is fully automated via a GitHub Action located at .github/workflows/canvas_check.yml at the root of the repository.
-Version 1.3 Updates (Zero Human Intervention):
+Version 1.3 Updates:
 
-   1. Canvas Search: Connects to your educational institution's Canvas platform (Tecsup) and retrieves active, outstanding tasks due from the current day forward.
+   1. Canvas Search: Connects to your educational institution's Canvas platform and retrieves active, outstanding tasks due from the current day forward.
    2. Submission Filtering: Scans your account to identify and filter out tasks you have already submitted or that have already been graded.
    3. Google Tasks De-duplication: Automatically downloads your current Google Tasks list, cross-checks it against your Canvas assignments by URL, and drops any duplicates.
    4. Auto-Insertion: Adds any remaining new, unsubmitted tasks directly into your Google Tasks account with due dates and deep links.
@@ -26,7 +25,7 @@ Configure your environment or GitHub repository with the following keys:
 
 | Variable | Description |
 |---|---|
-| CANVAS_URL | The base URL for your Canvas institution (e.g., Tecsup). |
+| CANVAS_URL | The base URL for your Canvas institution. |
 | CANVAS_KEY | Your personal Canvas API access token. |
 | TELEGRAM_BOT_TOKEN | The API token for your Telegram bot. |
 | TELEGRAM_CHAT_ID | The ID of the Telegram chat/user to receive notifications. |
@@ -41,5 +40,3 @@ cd "Canvas AutomationTask Project"
 
 Ensure you have a local .env file containing all the keys listed in the secrets table above before executing python canvasautomationtaskproject_v1_3.py.
 ------------------------------
-Would you like me to also provide an updated setup guide explaining how to get the GOOGLE_REFRESH_TOKEN or a snippet for your GitHub Actions workflow YAML to ensure the new secrets pass to Python correctly?
-
