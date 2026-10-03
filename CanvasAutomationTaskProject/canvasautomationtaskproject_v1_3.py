@@ -33,7 +33,7 @@ Original file is located at
 #    except userdata.SecretNotFoundError:
 #        print(f"❌ Secret not found: {name}")
 
-"""The purpose of this script is the automation of homework and exam search for my courses enrolled in Tecsup."""
+"""The purpose of this script is the automation of homework and exam search for my s enrolled in Tecsup."""
 
 import os
 from datetime import datetime, timezone
@@ -46,8 +46,6 @@ except ImportError:
 
 # Try to get secrets from Colab first; fall back to environment variables
 try:
-    #!pip install canvasapi
-    from canvasapi import Canvas
     from google.colab import userdata
     API_URL = userdata.get('CANVAS_URL')
     API_KEY = userdata.get('CANVAS_KEY')
@@ -58,6 +56,13 @@ except ImportError:
 
 if not API_URL or not API_KEY:
     raise RuntimeError("Missing CANVAS_URL or CANVAS_KEY environment variables.")
+# Import Canvas API (must be installed in the environment)
+try:
+    #!pip install canvasapi
+    from canvasapi import Canvas
+except ImportError:
+    raise ImportError("canvasapi is not installed. Please run 'pip install canvasapi'.")
+
 canvas = Canvas(API_URL, API_KEY)
 LOCAL_TZ = zoneinfo.ZoneInfo("America/Lima")   # GMT-5
 
@@ -75,14 +80,15 @@ def get_submitted_assignment_ids(canvas):
             continue
         try:
             # Fetch submissions for this specific course for the current user
-            submissions = course.get_submissions(student_ids=[user.id], workflow_state="submitted")
+            submissions = course.get_multiple_submissions(
+                student_ids="all",
+                workflow_state="submitted"
+            )
             for sub in submissions:
                 if hasattr(sub, 'assignment_id') and sub.assignment_id:
                     submitted_ids.add(sub.assignment_id)
         except Exception as e:
-            # Some courses may not allow this, skip them
             print(f"Could not fetch submissions for {course.name}: {e}")
-            pass
     return submitted_ids
 
 def get_tasks():
@@ -109,16 +115,16 @@ def get_tasks():
                 # Filter: Only show tasks that are due as of today
                 if due_local >= start_of_today:
                   pending_items.append({
-                      "Course_name": course.name,
-                      "Assignment_id": task.id,
-                      "Type": "Task",
-                      "Name": task.name,
-                      "Due_local": due_local, # datetime object
-                      "Link": task.html_url
+                      "course_name": course.name,
+                      "assignment_id": task.id,
+                      "type": "Task",
+                      "name": task.name,
+                      "due_local": due_local, # datetime object
+                      "link": task.html_url
                   })
         except Exception as e:
-            # Sometimes there are no permissions or the course does not have the module active
-            pass
+            # Log the error instead of silently passing
+            print(f"Error fetching assignments for {course.name}: {e}")
     return pending_items
 
 
@@ -165,7 +171,7 @@ def filter_and_add_to_google_tasks(pending_items):
     for item in new_to_add:
         try:
             due_rfc = gtm.format_due_rfc3339(item["due_local"])
-            notes = f"Course: {item['Course_name']}\nLink: {item['link']}"
+            notes = f"Course: {item['course_name']}\nLink: {item['link']}"
             gtm.add_task(
                 title=item["name"],
                 due_rfc3339=due_rfc,
@@ -196,10 +202,13 @@ def build_report(new_tasks, old_tasks, added_count):
         report_lines.append(f"\n📌 Already submitted or in Google Tasks: {len(old_tasks)}")
         # Optionally list a few
         for item in old_tasks[:5]:
-            report_lines.append(f"  - {item['Course_name']}: {item['name']}")
+            report_lines.append(f"  - {item['course_name']}: {item['name']}")
+        if len(old_tasks) > 5:
+            report_lines.append(f"  ... and {len(old_tasks)-5} more")
     return "\n".join(report_lines)
 
 if __name__ == "__main__":
+    print("Starting Canvas check...")
     pending = get_tasks()
     print(f"Total pending assignments (due today or later): {len(pending)}")
     new_tasks, old_tasks, added = filter_and_add_to_google_tasks(pending)
